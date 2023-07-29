@@ -1,3 +1,41 @@
 {
-  "extends": "next/core-web-vitals"
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "root": true,
+  "plugins": [
+    "@typescript-eslint/eslint-plugin",
+    "import",
+    "react"
+  ],
+  "rules": {
+    "semi": "off",
+    "@typescript-eslint/semi": [
+      "error"
+    ],
+    "@typescript-eslint/explicit-module-boundary-types": "error",
+    "import/order": "error"
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["@", "./"]
+        ],
+        "extensions": [".ts", ".tsx", ".js", ".jsx"]
+      }
+    },
+    "react": {
+      "version": "detect"
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/recommended",
+    "plugin:react/recommended"
+  ]
 }
