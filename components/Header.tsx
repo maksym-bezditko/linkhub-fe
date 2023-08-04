@@ -7,11 +7,26 @@ import { BsLayoutTextSidebar } from 'react-icons/bs';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import logo from '@/public/logo/png/main_bg.png';
+import { cn } from '@/lib/utils';
 
-export const Header = (): JSX.Element => {
+type Props = {
+  setIsSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  isSidebarVisible: boolean;
+};
+
+export const Header = ({
+  setIsSidebarVisible,
+  isSidebarVisible,
+}: Props): JSX.Element => {
   return (
-    <header className="h-[150px] w-full bg-slate-900 flex flex-row items-center mobile:h-[100px]">
-      <BsLayoutTextSidebar className="h-[25px] w-[150px] duration-100 text-greying-blue hover:text-white cursor-pointer laptop:h-[20px] laptop:w-[130px] mobile:h-[20px] mobile:w-[110px] mini-mobile:h-[15px]" />
+    <header className="h-[150px] w-full bg-slate-900 flex flex-row items-center mobile:h-[100px] z-10">
+      <BsLayoutTextSidebar
+        onClick={() => setIsSidebarVisible((prev) => !prev)}
+        className={cn(
+          'h-[25px] w-[150px] duration-100 hover:text-white cursor-pointer laptop:h-[20px] laptop:w-[130px] mobile:h-[20px] mobile:w-[110px] mini-mobile:h-[15px]',
+          isSidebarVisible ? 'text-white' : 'text-greying-blue',
+        )}
+      />
 
       <Link
         href="/"
