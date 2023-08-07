@@ -14,7 +14,10 @@ export const HeaderWithSidebar = (): JSX.Element => {
         isSidebarVisible={isSidebarVisible}
       />
 
-      <Sidebar isSidebarVisible={isSidebarVisible} />
+      <Sidebar
+        isSidebarVisible={isSidebarVisible}
+        setIsSidebarVisible={setIsSidebarVisible}
+      />
     </>
   );
 };

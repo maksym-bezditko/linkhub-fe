@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { BsLayoutTextSidebar } from 'react-icons/bs';
 import { Button } from './ui/button';
@@ -18,14 +18,25 @@ export const Header = ({
   setIsSidebarVisible,
   isSidebarVisible,
 }: Props): JSX.Element => {
+  const [isIconHovered, setIsIconHovered] = useState(false);
+
+  useEffect(() => {
+    if (!isSidebarVisible) {
+      setIsIconHovered(false);
+    }
+  }, [isSidebarVisible]);
+
   return (
-    <header className="h-[150px] w-full bg-slate-900 flex flex-row items-center mobile:h-[100px] z-10">
+    <header className="sticky top-0 h-[150px] w-full bg-slate-900 flex flex-row items-center mobile:h-[100px] z-20">
       <BsLayoutTextSidebar
         onClick={() => setIsSidebarVisible((prev) => !prev)}
         className={cn(
-          'h-[25px] w-[150px] duration-100 hover:text-white cursor-pointer laptop:h-[20px] laptop:w-[130px] mobile:h-[20px] mobile:w-[110px] mini-mobile:h-[15px]',
+          'h-[25px] w-[150px] duration-100 cursor-pointer laptop:h-[20px] laptop:w-[130px] mobile:h-[20px] mobile:w-[110px] mini-mobile:h-[15px]',
           isSidebarVisible ? 'text-white' : 'text-greying-blue',
+          isIconHovered ? 'text-white' : '',
         )}
+        onMouseOver={() => setIsIconHovered(true)}
+        onMouseOut={() => setIsIconHovered(false)}
       />
 
       <Link
@@ -53,7 +64,7 @@ export const Header = ({
 
           <Button
             variant="darkActionButton"
-            className="ml-[10px] mini-mobile:ml-[5px]"
+            className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px]"
           >
             Sign up
           </Button>

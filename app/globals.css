@@ -8,4 +8,6 @@ input {
 
 body {
   -webkit-tap-highlight-color: transparent;
+  background: rgb(2,0,36);
+  background: linear-gradient(0deg, rgb(15 23 42) 0%, #1322339e 35%, rgb(15 23 42) 100%);
 }

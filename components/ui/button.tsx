@@ -9,19 +9,17 @@ const buttonVariants = cva(
     rounded-full
     bg-white
     h-[50px]
-    min-w-[140px]
+    w-[100px]
     transition-all
     duration-200
     text-[20px]
     laptop:text-[16px]
     laptop:h-[40px]
-    laptop:min-w-[100px]
-    mobile:text-[12px]
-    mobile:h-[30px]
-    mobile:min-w-[80px]
-    mini-mobile:text-[10px]
-    mini-mobile:min-w-[50px]
-    mini-mobile:h-[25px]
+    laptop:w-[100px]
+    mobile:text-[14px]
+    mobile:w-[90px]
+    mini-mobile:text-[13px]
+    mini-mobile:w-[60px]
   `,
   {
     variants: {

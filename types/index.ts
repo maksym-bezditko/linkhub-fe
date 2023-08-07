@@ -14,3 +14,9 @@ export type Post = {
   comments?: Comment[];
   location?: string;
 };
+
+export type MenuSection = {
+  title: string;
+  onClick: () => void;
+  icon: JSX.Element | null;
+};

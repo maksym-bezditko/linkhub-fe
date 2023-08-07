@@ -19,19 +19,19 @@ module.exports = {
       keyframes: {
         'sidebar-appear': {
           from: { transform: 'translateX(-1000px)' },
-          to: { transform: 'translateX(-15%)' },
+          to: { transform: 'translateX(-300px)' },
         },
         'sidebar-disappear': {
-          from: { transform: 'translateX(-15%)' },
+          from: { transform: 'translateX(-300px)' },
           to: { transform: 'translateX(-1000px)' },
         },
 
         'sidebar-overlay-appear': {
           from: { opacity: '0' },
-          to: { opacity: '1' },
+          to: { opacity: '0.5' },
         },
         'sidebar-overlay-disappear': {
-          from: { opacity: '1' },
+          from: { opacity: '0.5' },
           to: { opacity: '0' },
         },
       },

@@ -17,7 +17,7 @@ export const Post = ({
   return (
     <div
       key={id}
-      className="bg-slate-900 bg-opacity-70 overflow-hidden pt-[20px] px-[50px] rounded-[15px] w-[500px] h-[700px]"
+      className="bg-slate-800 overflow-hidden pt-[20px] px-[50px] rounded-[15px] w-[500px] laptop:w-[400px] h-[700px] laptop:h-[600px] mobile:w-[300px] mobile:h-[600px] mobile:px-[20px] border"
     >
       <div className="flex flex-row justify-between items-center mb-[20px]">
         <div>
@@ -29,7 +29,7 @@ export const Post = ({
           </div>
         </div>
 
-        <p className="text-white">
+        <p className="text-white mobile:text-[12px]">
           {new Date(timestamp).getMinutes()} minutes ago
         </p>
       </div>
@@ -45,7 +45,7 @@ export const Post = ({
 
       <div className="flex flex-row justify-between mt-[20px] items-center">
         <div className="flex flex-row items-center">
-          <AiOutlineHeart className="h-[50px] w-[50px] text-red-400 cursor-pointer hover:scale-125 transition duration-100" />
+          <AiOutlineHeart className="h-[50px] w-[50px] mobile:h-[30px] mobile:w-[30px] text-red-400 cursor-pointer hover:scale-125 transition duration-100" />
 
           <p className="text-red-400 ml-[10px]">{likes} likes</p>
         </div>
