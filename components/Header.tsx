@@ -4,6 +4,9 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { BsLayoutTextSidebar } from 'react-icons/bs';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { DefaultSession } from 'next-auth';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import logo from '@/public/logo/png/main_bg.png';
@@ -12,13 +15,28 @@ import { cn } from '@/lib/utils';
 type Props = {
   setIsSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>;
   isSidebarVisible: boolean;
+  user: DefaultSession['user'];
 };
+
+const ADDITIONAL_INFO_ITEMS = [
+  {
+    name: 'About us',
+    onClick: () => {},
+  },
+  {
+    name: 'Upcoming features',
+    onClick: () => {},
+  },
+];
 
 export const Header = ({
   setIsSidebarVisible,
   isSidebarVisible,
+  user,
 }: Props): JSX.Element => {
   const [isIconHovered, setIsIconHovered] = useState(false);
+
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (!isSidebarVisible) {
@@ -27,48 +45,114 @@ export const Header = ({
   }, [isSidebarVisible]);
 
   return (
-    <header className="sticky top-0 h-[150px] w-full bg-slate-900 flex flex-row items-center mobile:h-[100px] z-20">
+    <header className="absolute top-0 h-[150px] w-full bg-dark-blue flex flex-row items-center mobile:h-[100px] z-20">
       <BsLayoutTextSidebar
         onClick={() => setIsSidebarVisible((prev) => !prev)}
         className={cn(
           'h-[25px] w-[150px] duration-100 cursor-pointer laptop:h-[20px] laptop:w-[130px] mobile:h-[20px] mobile:w-[110px] mini-mobile:h-[15px]',
-          isSidebarVisible ? 'text-white' : 'text-greying-blue',
+          isSidebarVisible ? 'text-white' : 'text-primary-grey',
           isIconHovered ? 'text-white' : '',
         )}
         onMouseOver={() => setIsIconHovered(true)}
         onMouseOut={() => setIsIconHovered(false)}
       />
 
-      <Link
-        href="/"
-        className="h-full flex justify-center items-center max-w-[200px] mobile:max-w-[120px] pr-[10px]"
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{
+          duration: 0.5,
+        }}
       >
-        <Image
-          src={logo}
-          alt="logo"
-          className="cursor-pointer object-contain w-full h-full"
-        />
-      </Link>
+        <Link
+          href="/"
+          className="h-full flex justify-center items-center max-w-[200px] mobile:max-w-[120px] pr-[10px]"
+        >
+          <Image
+            src={logo}
+            alt="logo"
+            className="cursor-pointer object-contain w-full h-full"
+          />
+        </Link>
+      </motion.div>
 
-      <div className="h-full flex flex-row justify-between laptop:justify-end pr-[20px] items-center w-full">
-        <Input
-          className="mx-[30px] laptop:hidden"
-          type="text"
-          placeholder="Search..."
-        />
+      <div className="h-full flex flex-row justify-end laptop:justify-end pr-[20px] items-center w-full">
+        {session?.user ? (
+          <Input
+            className="mx-[30px] laptop:hidden"
+            type="text"
+            placeholder="Search..."
+          />
+        ) : (
+          <nav className="laptop:hidden">
+            <ul className="flex flex-row pr-[20px] text-white cursor-pointer">
+              {ADDITIONAL_INFO_ITEMS.map((item) => {
+                return (
+                  <div
+                    key={item.name}
+                    className="mr-[20px] justify-between cursor-pointer"
+                    onClick={item.onClick}
+                  >
+                    <li>{item.name}</li>
 
-        <div className="flex flex-row h-full items-center">
-          <Button onClick={() => {}} variant="lightActionButton">
-            Login
-          </Button>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: '100%' }}
+                      transition={{
+                        duration: 0.5,
+                      }}
+                      className="h-[2px] rounded-md bg-white"
+                    ></motion.div>
+                  </div>
+                );
+              })}
+            </ul>
+          </nav>
+        )}
 
-          <Button
-            variant="darkActionButton"
-            className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px]"
-          >
-            Sign up
-          </Button>
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{
+            duration: 0.5,
+          }}
+          className="flex flex-row h-full items-center"
+        >
+          {!user ? (
+            <>
+              <Button
+                onClick={() =>
+                  signIn(undefined, {
+                    redirect: true,
+                    callbackUrl: '/feed',
+                  })
+                }
+                variant="lightActionButton"
+              >
+                Login
+              </Button>
+
+              <Button
+                variant="darkActionButton"
+                className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px]"
+              >
+                Sign up
+              </Button>
+            </>
+          ) : (
+            <Button
+              onClick={() =>
+                signOut({
+                  redirect: true,
+                  callbackUrl: '/',
+                })
+              }
+              variant="lightActionButton"
+            >
+              Sign out
+            </Button>
+          )}
+        </motion.div>
       </div>
     </header>
   );

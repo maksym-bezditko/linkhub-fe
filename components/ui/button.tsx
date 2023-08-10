@@ -24,8 +24,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        lightActionButton: 'hover:bg-slate-300',
-        darkActionButton: 'bg-greying-blue text-white hover:bg-slate-600',
+        lightActionButton: 'hover:bg-primary-green hover:text-white',
+        darkActionButton: 'hover:bg-primary-yellow',
       },
       size: {
         default: null,

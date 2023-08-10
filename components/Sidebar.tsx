@@ -1,4 +1,6 @@
-import React, { useMemo } from 'react';
+'use client';
+
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   LuLayout,
   LuSearch,
@@ -28,7 +30,12 @@ export const Sidebar = ({
 }: Props): JSX.Element => {
   const isPreviouslyOpened = usePrevious(isSidebarVisible);
 
-  const closeSidebar = () => setIsSidebarVisible(false);
+  const [shouldHideModalOverlay, setShouldHideModalOverlay] = useState(true);
+
+  const closeSidebar = useCallback(
+    () => setIsSidebarVisible(false),
+    [setIsSidebarVisible],
+  );
 
   const menuSections: MenuSection[] = useMemo(
     () => [
@@ -63,14 +70,28 @@ export const Sidebar = ({
         icon: <LuBook {...COMMON_ICON_PROPS} />,
       },
     ],
-    [],
+    [closeSidebar],
   );
 
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => setShouldHideModalOverlay(!isSidebarVisible),
+      isSidebarVisible ? 0 : 500,
+    );
+
+    return () => clearTimeout(timeout);
+  }, [isSidebarVisible]);
+
   return (
-    <div className="fixed top-0 left-0 h-[100vh] w-[100vw] z-10">
+    <div
+      className={cn(
+        'fixed top-0 left-0 h-[100vh] w-[100vw] z-10',
+        shouldHideModalOverlay ? 'hidden' : 'block',
+      )}
+    >
       <div
         className={cn(
-          'h-full bg-gray-500 opacity-0 w-full top-0 z-10 cursor-pointer',
+          'h-full bg-gray-500 opacity-0 w-full top-0 z-10 cursor-pointer border',
           isSidebarVisible
             ? 'animate-sidebar-overlay-appear'
             : isPreviouslyOpened
@@ -82,7 +103,7 @@ export const Sidebar = ({
 
       <div
         className={cn(
-          'absolute top-0 left-0 w-[600px] h-full bg-slate-900 translate-x-[-1000px] z-20 cursor-default flex flex-col justify-center pl-[330px]',
+          'absolute top-0 left-0 w-[600px] h-full bg-dark-blue translate-x-[-1000px] z-20 flex flex-col justify-center pl-[330px]',
           isSidebarVisible
             ? 'animate-sidebar-appear'
             : isPreviouslyOpened
@@ -93,7 +114,7 @@ export const Sidebar = ({
         <div className="flex flex-col justify-center">
           {menuSections.map(({ onClick, title, icon }) => (
             <Link
-              href="/"
+              href="#"
               className="text-white text-[15px] my-[20px] h-fit flex flex-row items-center"
               key={title}
               onClick={onClick}

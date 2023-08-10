@@ -1,10 +1,11 @@
-import React from 'react';
-import { PostsFeed } from '@/components/PostsFeed';
+'use client';
 
-export default function Home(): JSX.Element {
-  return (
-    <main>
-      <PostsFeed />
-    </main>
-  );
+import React from 'react';
+import { LandingPage } from '@/components/LandingPage';
+import { useRedirect } from '@/hooks/useRedirect';
+
+export default function HomeView(): JSX.Element {
+  useRedirect(true, '/feed');
+
+  return <LandingPage />;
 }

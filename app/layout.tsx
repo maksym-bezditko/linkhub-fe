@@ -1,11 +1,13 @@
 import React from 'react';
 import './globals.css';
 import type { Metadata } from 'next';
-import { Lato } from 'next/font/google';
-import { HeaderWithSidebar } from '@/components/HeaderWithSidebar';
+import { Poppins } from 'next/font/google';
 import { cn } from '@/lib/utils';
+import { Providers } from '@/components/Providers';
+import HeaderWithSidebarWithAuthCheck from '@/components/HeaderWithSidebarWithAuthCheck';
+import { FullscreeenLoader } from '@/components/FullscreenLoader';
 
-const inter = Lato({ subsets: ['latin'], weight: '400' });
+const inter = Poppins({ subsets: ['latin'], weight: '400' });
 
 export const metadata: Metadata = {
   title: 'LinkHub',
@@ -19,10 +21,14 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang="en">
-      <body className={cn(inter.className, 'bg-greying-blue select-none')}>
-        <HeaderWithSidebar />
+      <body className={cn(inter.className, 'bg-dark-blue select-none')}>
+        <Providers>
+          <HeaderWithSidebarWithAuthCheck />
 
-        {children}
+          <FullscreeenLoader />
+
+          {children}
+        </Providers>
       </body>
     </html>
   );

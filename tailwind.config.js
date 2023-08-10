@@ -46,6 +46,14 @@ module.exports = {
       },
       colors: {
         'greying-blue': '#364f6b',
+        'dark-blue': '#252B48',
+        'primary-grey': '#445069',
+        'primary-green': '#5B9A8B',
+        'primary-yellow': '#F7E987',
+        'first-landing-section-button-color': '#252B48',
+        'second-landing-section-button-color': '#2e74ff',
+        'third-landing-section-button-color': '#43c698',
+        'fourth-landing-section-button-color': '#F4D160',
       },
       screens: {
         laptop: { max: '1024px' },

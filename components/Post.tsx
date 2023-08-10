@@ -9,7 +9,6 @@ export const Post = ({
   likes,
   id,
   location,
-  timestamp,
   imageUrl,
   userName,
   comments,
@@ -17,21 +16,20 @@ export const Post = ({
   return (
     <div
       key={id}
-      className="bg-slate-800 overflow-hidden pt-[20px] px-[50px] rounded-[15px] w-[500px] laptop:w-[400px] h-[700px] laptop:h-[600px] mobile:w-[300px] mobile:h-[600px] mobile:px-[20px] border"
+      className="bg-dark-blue bg-opacity-70 overflow-hidden pt-[20px] px-[50px] rounded-[15px] w-[500px] laptop:w-[400px] h-[700px] laptop:h-[600px] mobile:w-[300px] mobile:h-[600px] mobile:px-[20px] border"
     >
       <div className="flex flex-row justify-between items-center mb-[20px]">
         <div>
           <p className="text-white mb-[10px]">{userName}</p>
 
-          <div className="flex felx-row">
+          <div className="flex flex-row">
             <FaLocationArrow className="mr-[10px] text-orange-500" />
+
             <p className="text-white text-[10px]">{location}</p>
           </div>
         </div>
 
-        <p className="text-white mobile:text-[12px]">
-          {new Date(timestamp).getMinutes()} minutes ago
-        </p>
+        <p className="text-white mobile:text-[12px]">13 minutes ago</p>
       </div>
 
       <div className="w-full h-[60%] relative">

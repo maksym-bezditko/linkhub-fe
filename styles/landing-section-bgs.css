@@ -1,0 +1,19 @@
+.first-landing-section {
+  background: rgb(37,43,72);
+  background: linear-gradient(180deg, rgba(37,43,72,1) 17%, rgba(46,116,255,1) 100%);
+}
+
+.second-landing-section {
+  background: rgb(46,116,255);
+  background: linear-gradient(180deg, rgba(46,116,255,1) 0%, rgba(67,198,152,1) 100%);
+}
+
+.third-landing-section {
+  background: rgb(67,198,152);
+  background: linear-gradient(180deg, rgba(67,198,152,1) 0%, rgba(244,209,96,1) 100%);
+}
+
+.fourth-landing-section {
+  background: rgb(244,209,96);
+  background: linear-gradient(180deg, rgba(244,209,96,1) 0%, rgba(255,95,24,1) 100%);
+}
