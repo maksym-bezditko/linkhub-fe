@@ -1,22 +1,19 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { BsLayoutTextSidebar } from 'react-icons/bs';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { DefaultSession } from 'next-auth';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import logo from '@/public/logo/png/main_bg.png';
 import { cn } from '@/lib/utils';
 
-type Props = {
-  setIsSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  isSidebarVisible: boolean;
-  user: DefaultSession['user'];
-};
+const SIDEBAR_WRAPPER_CLASSNAMES =
+  'h-[25px] w-[150px] laptop:h-[20px] laptop:w-[130px] mobile:h-[20px] mobile:w-[110px] mini-mobile:h-[15px]';
 
 const ADDITIONAL_INFO_ITEMS = [
   {
@@ -29,14 +26,75 @@ const ADDITIONAL_INFO_ITEMS = [
   },
 ];
 
+type Props = {
+  setIsSidebarVisible?: React.Dispatch<React.SetStateAction<boolean>>;
+  isSidebarVisible?: boolean;
+  isAuthHeader?: boolean;
+};
+
 export const Header = ({
   setIsSidebarVisible,
-  isSidebarVisible,
-  user,
+  isSidebarVisible = false,
+  isAuthHeader = false,
 }: Props): JSX.Element => {
   const [isIconHovered, setIsIconHovered] = useState(false);
 
+  const router = useRouter();
+
   const { data: session } = useSession();
+
+  const buttons = useMemo(() => {
+    if (isAuthHeader) {
+      return (
+        <Button
+          variant="darkActionButton"
+          className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px] w-[150px]"
+          onClick={router.back}
+        >
+          Go Back
+        </Button>
+      );
+    }
+
+    if (session?.user) {
+      return (
+        <Button
+          onClick={() =>
+            signOut({
+              redirect: true,
+              callbackUrl: '/',
+            })
+          }
+          variant="lightActionButton"
+        >
+          Sign out
+        </Button>
+      );
+    }
+
+    return (
+      <>
+        <Button
+          onClick={() =>
+            signIn(undefined, {
+              redirect: true,
+              callbackUrl: '/feed',
+            })
+          }
+          variant="lightActionButton"
+        >
+          Login
+        </Button>
+
+        <Button
+          variant="darkActionButton"
+          className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px]"
+        >
+          Sign up
+        </Button>
+      </>
+    );
+  }, [isAuthHeader, router.back, session?.user]);
 
   useEffect(() => {
     if (!isSidebarVisible) {
@@ -45,17 +103,29 @@ export const Header = ({
   }, [isSidebarVisible]);
 
   return (
-    <header className="absolute top-0 h-[150px] w-full bg-dark-blue flex flex-row items-center mobile:h-[100px] z-20">
-      <BsLayoutTextSidebar
-        onClick={() => setIsSidebarVisible((prev) => !prev)}
+    <header className="absolute top-0 h-[150px] w-full flex flex-row items-center mobile:h-[100px] z-20">
+      <div
         className={cn(
-          'h-[25px] w-[150px] duration-100 cursor-pointer laptop:h-[20px] laptop:w-[130px] mobile:h-[20px] mobile:w-[110px] mini-mobile:h-[15px]',
-          isSidebarVisible ? 'text-white' : 'text-primary-grey',
-          isIconHovered ? 'text-white' : '',
+          'absolute z-[-50] w-full h-full',
+          isAuthHeader ? 'bg-transparent' : 'bg-dark-blue',
         )}
-        onMouseOver={() => setIsIconHovered(true)}
-        onMouseOut={() => setIsIconHovered(false)}
-      />
+      ></div>
+
+      {isAuthHeader ? (
+        <div className={SIDEBAR_WRAPPER_CLASSNAMES}></div>
+      ) : (
+        <BsLayoutTextSidebar
+          onClick={() => setIsSidebarVisible?.((prev) => !prev)}
+          className={cn(
+            SIDEBAR_WRAPPER_CLASSNAMES,
+            'duration-100 cursor-pointer',
+            isSidebarVisible ? 'text-white' : 'text-primary-grey',
+            isIconHovered ? 'text-white' : '',
+          )}
+          onMouseOver={() => setIsIconHovered(true)}
+          onMouseOut={() => setIsIconHovered(false)}
+        />
+      )}
 
       <motion.div
         initial={{ opacity: 0 }}
@@ -66,7 +136,7 @@ export const Header = ({
       >
         <Link
           href="/"
-          className="h-full flex justify-center items-center max-w-[200px] mobile:max-w-[120px] pr-[10px]"
+          className="h-full flex justify-center items-center max-w-[200px] pr-[10px]"
         >
           <Image
             src={logo}
@@ -118,40 +188,7 @@ export const Header = ({
           }}
           className="flex flex-row h-full items-center"
         >
-          {!user ? (
-            <>
-              <Button
-                onClick={() =>
-                  signIn(undefined, {
-                    redirect: true,
-                    callbackUrl: '/feed',
-                  })
-                }
-                variant="lightActionButton"
-              >
-                Login
-              </Button>
-
-              <Button
-                variant="darkActionButton"
-                className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px]"
-              >
-                Sign up
-              </Button>
-            </>
-          ) : (
-            <Button
-              onClick={() =>
-                signOut({
-                  redirect: true,
-                  callbackUrl: '/',
-                })
-              }
-              variant="lightActionButton"
-            >
-              Sign out
-            </Button>
-          )}
+          {buttons}
         </motion.div>
       </div>
     </header>

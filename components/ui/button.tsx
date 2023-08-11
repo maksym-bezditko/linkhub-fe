@@ -15,7 +15,6 @@ const buttonVariants = cva(
     text-[20px]
     laptop:text-[16px]
     laptop:h-[40px]
-    laptop:w-[100px]
     mobile:text-[14px]
     mobile:w-[90px]
     mini-mobile:text-[13px]
@@ -26,6 +25,8 @@ const buttonVariants = cva(
       variant: {
         lightActionButton: 'hover:bg-primary-green hover:text-white',
         darkActionButton: 'hover:bg-primary-yellow',
+        login: 'hover:bg-opacity-70',
+        goBack: 'w-[150px] mobile:w-[130px] mini-mobile:w-[100px]',
       },
       size: {
         default: null,

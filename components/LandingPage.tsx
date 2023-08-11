@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { HeaderWithSidebar } from './HeaderWithSidebar';
 import { cn } from '@/lib/utils';
 
-import '@/styles/landing-section-bgs.css';
+import styles from '@/styles/landing-section-bgs.module.css';
 import { useWindowSize } from '@/hooks/useWindowSize';
 
 type Section = {
@@ -29,10 +29,10 @@ const sections: Section[] = [
 ];
 
 const sectionBackgroundColors: Record<number, string> = {
-  0: 'first-landing-section',
-  1: 'second-landing-section',
-  2: 'third-landing-section',
-  3: 'fourth-landing-section',
+  0: styles['first-landing-section'],
+  1: styles['second-landing-section'],
+  2: styles['third-landing-section'],
+  3: styles['fourth-landing-section'],
 };
 
 const sectionTitleColors: Record<number, string> = {

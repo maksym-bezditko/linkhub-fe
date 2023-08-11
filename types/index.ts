@@ -20,3 +20,8 @@ export type MenuSection = {
   onClick: () => void;
   icon: JSX.Element | null;
 };
+
+export type LoginWithEmail = {
+  email: string;
+  password: string;
+};

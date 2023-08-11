@@ -34,6 +34,10 @@ module.exports = {
           from: { opacity: '0.5' },
           to: { opacity: '0' },
         },
+        loader: {
+          from: { transform: 'rotate(0deg)' },
+          to: { transform: 'rotate(360deg)' },
+        },
       },
       animation: {
         'sidebar-appear':
@@ -43,6 +47,7 @@ module.exports = {
         'sidebar-overlay-appear': 'sidebar-overlay-appear 0.5s linear forwards',
         'sidebar-overlay-disappear':
           'sidebar-overlay-disappear 0.5s linear forwards',
+        loader: 'loader 1s linear infinite',
       },
       colors: {
         'greying-blue': '#364f6b',
