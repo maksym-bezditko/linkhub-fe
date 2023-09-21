@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,19 +18,21 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AuthBackground } from '@/components/AuthBackground';
-import { LOGIN_WITH_EMAIL } from '@/graphql/queries/login-with-email.query';
-import { LoginWithEmail } from '@/types';
+import { LOGIN_WITH_EMAIL_QUERY } from '@/graphql/queries/login-with-email.query';
+import { LoginWithEmailResponse } from '@/types';
 import { store } from '@/store';
 
 const formSchema = z.object({
-  email: z.string(),
-  password: z.string().min(6, {
-    message: 'Password cannot be less than 6 symbols long',
-  }),
+  email: z.string().email('It is not a valid email'),
+  password: z.string(),
 });
 
 const LoginPage = (): JSX.Element => {
-  const [trigger] = useLazyQuery<LoginWithEmail>(LOGIN_WITH_EMAIL);
+  const [trigger] = useLazyQuery<LoginWithEmailResponse>(
+    LOGIN_WITH_EMAIL_QUERY,
+  );
+
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
 
   const router = useRouter();
 
@@ -44,7 +46,7 @@ const LoginPage = (): JSX.Element => {
 
   const onSubmit = useCallback(
     async (values: z.infer<typeof formSchema>) => {
-      store.setIsFullscreenLoaderVisible(true);
+      setIsAuthLoading(true);
 
       try {
         const { data, error } = await trigger({
@@ -70,20 +72,27 @@ const LoginPage = (): JSX.Element => {
         router.replace('/feed');
       } catch (e) {
         console.error(e);
-      } finally {
-        store.setIsFullscreenLoaderVisible(false);
+        form.setError('root.signIn', {
+          type: 'custom',
+          message: 'Wrong credentials',
+        });
+        setIsAuthLoading(false);
       }
     },
-    [router, trigger],
+    [form, router, trigger],
   );
+
+  useEffect(() => {
+    return () => form.clearErrors();
+  }, [form]);
 
   return (
     <>
       <Form {...form}>
         <motion.form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col w-[400px] items-center p-[20px] border-[2px] rounded-xl mx-[20px]"
-          initial={{ scale: 0.9 }}
+          className="flex flex-col w-[400px] items-center p-[20px] border-[2px] rounded-xl"
+          initial={{ scale: 0.95 }}
           whileInView={{ scale: 1 }}
           transition={{
             duration: 0.2,
@@ -97,11 +106,10 @@ const LoginPage = (): JSX.Element => {
               <FormItem>
                 <FormLabel className="text-white">Email</FormLabel>
                 <FormControl>
-                  <Input variant="login" {...field} />
+                  <Input variant="auth" {...field} />
                 </FormControl>
-                <div className="min-h-[20px]">
-                  <FormMessage />
-                </div>
+
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -113,19 +121,27 @@ const LoginPage = (): JSX.Element => {
               <FormItem>
                 <FormLabel className="text-white">Password</FormLabel>
                 <FormControl>
-                  <Input type="password" variant="login" {...field} />
+                  <Input type="password" variant="auth" {...field} />
                 </FormControl>
-                <div className="min-h-[20px]">
-                  <FormMessage />
-                </div>
+
+                <FormMessage />
               </FormItem>
             )}
           />
 
+          <div className="w-full min-h-[20px]">
+            {form.formState.errors.root?.signIn?.message && (
+              <p className="w-full text-sm font-medium text-red-500 dark:text-red-900 text-center">
+                {form.formState.errors.root.signIn.message}
+              </p>
+            )}
+          </div>
+
           <Button
             className="align-middle mt-[10px]"
             type="submit"
-            variant="login"
+            variant="auth"
+            isLoading={isAuthLoading}
           >
             Sign in
           </Button>

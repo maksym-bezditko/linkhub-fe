@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { observer } from 'mobx-react';
+import { Loader } from './Loader';
 import styles from '@/styles/landing-section-bgs.module.css';
 import { cn } from '@/lib/utils';
 import { store } from '@/store';
@@ -15,7 +16,7 @@ export const FullscreeenLoader: React.FC = observer(
           styles['first-landing-section'],
         )}
       >
-        <span className="w-[48px] h-[48px] border-[5px] border-b-transparent rounded-full inline-block box-border animate-loader"></span>
+        <Loader />
       </div>
     ),
 );

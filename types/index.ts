@@ -21,11 +21,27 @@ export type MenuSection = {
   icon: JSX.Element | null;
 };
 
-export type LoginWithEmail = {
+export type LoginWithEmailResponse = {
   loginWithEmail: Tokens;
 };
 
 export type Tokens = {
   accessToken: string | null;
   refreshToken: string | null;
+};
+
+export type CommonResponse = {
+  succeeded: boolean;
+};
+
+export type CheckForEmailExistenceResponse = {
+  checkForEmailExistence: CommonResponse;
+};
+
+export type CheckForUsernameExistenceResponse = {
+  checkForUsernameExistence: CommonResponse;
+};
+
+export type CreateUserResponse = {
+  createUser: Tokens;
 };

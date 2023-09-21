@@ -11,8 +11,6 @@ export const useRedirect = (triggerOnAuthed = true, to = '/'): void => {
       autorun(() => {
         const isAuthenticated = store.isAuthenticated;
 
-        console.log(isAuthenticated);
-
         if (triggerOnAuthed ? isAuthenticated : !isAuthenticated) {
           router.replace(to);
         }

@@ -58,8 +58,6 @@ export const Header = observer(
       });
     }, [router]);
 
-    console.log(store.isAuthenticated);
-
     const buttons = useMemo(() => {
       if (isAuthHeader) {
         return (
@@ -87,12 +85,14 @@ export const Header = observer(
             <Button variant="lightActionButton">Login</Button>
           </Link>
 
-          <Button
-            variant="darkActionButton"
-            className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px]"
-          >
-            Sign up
-          </Button>
+          <Link href="auth/register">
+            <Button
+              variant="darkActionButton"
+              className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px]"
+            >
+              Sign up
+            </Button>
+          </Link>
         </>
       );
     }, [handleSignOut, isAuthHeader, router.back]);

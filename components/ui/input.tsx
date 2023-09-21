@@ -4,11 +4,11 @@ import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const inputVariant = cva(
-  'h-[50px] w-full border-[2px] rounded-full pl-[30px] caret-white text-white bg-transparent text-[18px]',
+  'h-[50px] w-full border-[2px] rounded-lg pl-[30px] caret-white text-white bg-transparent text-[18px]',
   {
     variants: {
       variant: {
-        login: 'rounded-lg bg-transparent text-[18px] px-[15px]',
+        auth: 'bg-transparent text-[18px] px-[15px]',
       },
     },
   },

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 
+import { Loader } from '../Loader';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
@@ -19,14 +20,17 @@ const buttonVariants = cva(
     mobile:w-[90px]
     mini-mobile:text-[13px]
     mini-mobile:w-[60px]
+    flex
+    justify-center
+    items-center
   `,
   {
     variants: {
       variant: {
         lightActionButton: 'hover:bg-primary-green hover:text-white',
         darkActionButton: 'hover:bg-primary-yellow',
-        login: 'hover:bg-opacity-70',
         goBack: 'w-[150px] mobile:w-[130px] mini-mobile:w-[100px]',
+        auth: 'w-[200px] mobile:w-[180px] mini-mobile:w-[120px] hover:bg-opacity-70',
       },
       size: {
         default: null,
@@ -39,14 +43,32 @@ const buttonVariants = cva(
   },
 );
 
+type CustomButtonProps = {
+  isLoading?: boolean;
+  loaderSize?: number;
+};
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    CustomButtonProps,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  (
+    {
+      size,
+      variant,
+      children,
+      className,
+      isLoading,
+      loaderSize = 24,
+      asChild = false,
+      ...props
+    },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : 'button';
 
     return (
@@ -54,7 +76,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
-      />
+      >
+        {isLoading ? <Loader size={loaderSize} /> : children}
+      </Comp>
     );
   },
 );

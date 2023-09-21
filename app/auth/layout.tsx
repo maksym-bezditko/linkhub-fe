@@ -7,7 +7,7 @@ const AuthLayout = ({
   children: React.ReactNode;
 }): JSX.Element => {
   return (
-    <div className="h-[100vh] w-[100vw] fixed top-0 flex justify-center items-center">
+    <div className="flex justify-center items-start py-[20vh] px-[20px]">
       <Header isAuthHeader />
 
       {children}
