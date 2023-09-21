@@ -11,6 +11,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.1",
     "@hookform/resolvers": "^3.2.0",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
@@ -19,9 +20,11 @@
     "clsx": "^2.0.0",
     "eslint-config-next": "13.4.10",
     "framer-motion": "^10.15.1",
+    "graphql": "^16.8.0",
     "lucide-react": "^0.265.0",
+    "mobx": "^6.10.0",
+    "mobx-react": "^9.0.0",
     "next": "13.4.10",
-    "next-auth": "^4.22.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.45.4",

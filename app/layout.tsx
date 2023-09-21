@@ -4,8 +4,7 @@ import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { Providers } from '@/components/Providers';
-import HeaderWithSidebarWithAuthCheck from '@/components/HeaderWithSidebarWithAuthCheck';
-import { FullscreeenAuthLoader } from '@/components/FullscreenLoader';
+import { FullscreeenLoader } from '@/components/FullscreenLoader';
 import styles from '@/styles/landing-section-bgs.module.css';
 import { AppBackground } from '@/components/AppBackground';
 
@@ -16,11 +15,11 @@ export const metadata: Metadata = {
   description: 'Website that actually connects people',
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: {
   children: React.ReactNode;
-}): JSX.Element {
+}): JSX.Element => {
   return (
     <html lang="en">
       <body
@@ -32,13 +31,13 @@ export default function RootLayout({
       >
         <Providers>
           <AppBackground />
-          <FullscreeenAuthLoader />
-
-          <HeaderWithSidebarWithAuthCheck />
+          <FullscreeenLoader />
 
           {children}
         </Providers>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

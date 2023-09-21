@@ -22,6 +22,10 @@ export type MenuSection = {
 };
 
 export type LoginWithEmail = {
-  email: string;
-  password: string;
+  loginWithEmail: Tokens;
+};
+
+export type Tokens = {
+  accessToken: string | null;
+  refreshToken: string | null;
 };

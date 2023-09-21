@@ -5,8 +5,6 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
-import { useLazyQuery } from '@apollo/client';
-import { useRouter } from 'next/navigation';
 import {
   Form,
   FormControl,
@@ -17,10 +15,8 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Header } from '@/components/Header';
 import { AuthBackground } from '@/components/AuthBackground';
-import { LOGIN_WITH_EMAIL } from '@/graphql/queries/login-with-email.query';
-import { LoginWithEmail } from '@/types';
-import { store } from '@/store';
 
 const formSchema = z.object({
   email: z.string(),
@@ -29,11 +25,7 @@ const formSchema = z.object({
   }),
 });
 
-const LoginPage = (): JSX.Element => {
-  const [trigger] = useLazyQuery<LoginWithEmail>(LOGIN_WITH_EMAIL);
-
-  const router = useRouter();
-
+const RegisterPage = (): JSX.Element => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,51 +34,22 @@ const LoginPage = (): JSX.Element => {
     },
   });
 
-  const onSubmit = useCallback(
-    async (values: z.infer<typeof formSchema>) => {
-      store.setIsFullscreenLoaderVisible(true);
-
-      try {
-        const { data, error } = await trigger({
-          variables: {
-            loginWithEmailInput: values,
-          },
-        });
-
-        if (
-          error ||
-          !data ||
-          !data?.loginWithEmail.accessToken ||
-          !data?.loginWithEmail.refreshToken
-        ) {
-          throw new Error(error?.message || 'Authentication error');
-        }
-
-        store.setTokens({
-          accessToken: data?.loginWithEmail.accessToken,
-          refreshToken: data?.loginWithEmail.refreshToken,
-        });
-
-        router.replace('/feed');
-      } catch (e) {
-        console.error(e);
-      } finally {
-        store.setIsFullscreenLoaderVisible(false);
-      }
-    },
-    [router, trigger],
-  );
+  const onSubmit = useCallback((values: z.infer<typeof formSchema>) => {
+    // sign in
+  }, []);
 
   return (
-    <>
+    <div className="h-[100vh] w-[100vw] fixed top-0 flex justify-center items-center">
+      <Header isAuthHeader />
+
       <Form {...form}>
         <motion.form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col w-[400px] items-center p-[20px] border-[2px] rounded-xl mx-[20px]"
-          initial={{ scale: 0.9 }}
+          initial={{ scale: 0.7 }}
           whileInView={{ scale: 1 }}
           transition={{
-            duration: 0.2,
+            duration: 0.5,
             ease: 'easeIn',
           }}
         >
@@ -133,8 +96,8 @@ const LoginPage = (): JSX.Element => {
       </Form>
 
       <AuthBackground />
-    </>
+    </div>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

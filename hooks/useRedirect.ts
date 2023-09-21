@@ -1,13 +1,22 @@
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { autorun } from 'mobx';
+import { store } from '@/store';
 
 export const useRedirect = (triggerOnAuthed = true, to = '/'): void => {
-  const { data: session } = useSession();
+  const router = useRouter();
 
-  useEffect(() => {
-    if (triggerOnAuthed ? session : !session) {
-      redirect(to);
-    }
-  }, [session, to, triggerOnAuthed]);
+  useEffect(
+    () =>
+      autorun(() => {
+        const isAuthenticated = store.isAuthenticated;
+
+        console.log(isAuthenticated);
+
+        if (triggerOnAuthed ? isAuthenticated : !isAuthenticated) {
+          router.replace(to);
+        }
+      }),
+    [router, to, triggerOnAuthed],
+  );
 };
