@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-input, textarea, div {
+input, textarea, div, select {
   outline: none;
 }
 

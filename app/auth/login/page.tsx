@@ -23,7 +23,7 @@ import { LoginWithEmailResponse } from '@/types';
 import { store } from '@/store';
 
 const formSchema = z.object({
-  email: z.string().email('It is not a valid email'),
+  email: z.string().email(),
   password: z.string(),
 });
 

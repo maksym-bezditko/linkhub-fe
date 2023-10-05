@@ -1,4 +1,7 @@
+'use client';
+
 import { makeAutoObservable } from 'mobx';
+import { makePersistable } from 'mobx-persist-store';
 import { Tokens } from '@/types';
 
 class Store {
@@ -13,6 +16,12 @@ class Store {
 
   constructor() {
     makeAutoObservable(this);
+
+    makePersistable(this, {
+      name: 'Store',
+      properties: ['accessToken', 'refreshToken', 'isFullscreenLoaderVisible'],
+      storage: window.localStorage,
+    });
   }
 
   setTokens(tokens: Tokens) {

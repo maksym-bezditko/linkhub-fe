@@ -7,7 +7,7 @@ const FeedLayout = ({
   children: React.ReactNode;
 }): JSX.Element => {
   return (
-    <main>
+    <main className="pt-[200px] mobile:pt-[150px] flex justify-center items-center">
       <HeaderWithSidebar />
 
       {children}

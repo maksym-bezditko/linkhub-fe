@@ -12,7 +12,7 @@ import { observer } from 'mobx-react';
 
 export const apolloClient = new ApolloClient({
   link: createHttpLink({
-    uri: 'http://localhost:3001/graphql',
+    uri: process.env.GRAPHQL_API_URL,
   }),
   cache: new InMemoryCache(),
   ssrMode: true,

@@ -17,8 +17,9 @@ export type Post = {
 
 export type MenuSection = {
   title: string;
-  onClick: () => void;
   icon: JSX.Element | null;
+  shouldAppear: boolean;
+  href?: string;
 };
 
 export type LoginWithEmailResponse = {
@@ -44,4 +45,30 @@ export type CheckForUsernameExistenceResponse = {
 
 export type CreateUserResponse = {
   createUser: Tokens;
+};
+
+export type UserIdResponse = {
+  userId: string;
+};
+
+export type Image = {
+  imageId: string;
+  name: string;
+  url: string;
+};
+
+export type Gender = 'MALE' | 'FEMALE' | 'TRANS' | 'NON-BINARY';
+
+export type ProfileResponse = {
+  getProfile: {
+    id: string;
+    userId: string;
+    bio: string;
+    firstName: string;
+    gender: Gender;
+    lastName: string;
+    userName: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
 };

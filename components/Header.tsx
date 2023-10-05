@@ -7,11 +7,14 @@ import { BsLayoutTextSidebar } from 'react-icons/bs';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { observer } from 'mobx-react';
+import { useMutation } from '@apollo/client';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import logo from '@/public/logo/png/main_bg.png';
 import { cn } from '@/lib/utils';
 import { store } from '@/store';
+import { UserIdResponse } from '@/types';
+import { LOGOUT_MUTATION } from '@/graphql/mutations/user-id.mutation';
 
 const SIDEBAR_WRAPPER_CLASSNAMES =
   'h-[25px] w-[150px] laptop:h-[20px] laptop:w-[130px] mobile:h-[20px] mobile:w-[110px] mini-mobile:h-[15px]';
@@ -41,13 +44,30 @@ export const Header = observer(
     isSidebarVisible = false,
     isAuthHeader = false,
   }: Props): JSX.Element => {
-    const [isIconHovered, setIsIconHovered] = useState(false);
-    const [shouldIgnoreHeaderChange, setShouldIgnoreHeaderChange] =
-      useState(false);
+    const [logoutTrigger] = useMutation<UserIdResponse>(LOGOUT_MUTATION);
 
     const router = useRouter();
 
-    const handleSignOut = useCallback(() => {
+    const [isIconHovered, setIsIconHovered] = useState(false);
+    const [shouldIgnoreHeaderChange, setShouldIgnoreHeaderChange] =
+      useState(false);
+    const [loadingButtonType, setLoadingButtonType] = useState<
+      'login' | 'sign out' | 'sign up' | 'go back'
+    >();
+
+    const handleSignOut = useCallback(async () => {
+      setLoadingButtonType('sign out');
+
+      try {
+        await logoutTrigger({
+          context: {
+            headers: { Authorization: `Bearer ${store.accessToken}` },
+          },
+        });
+      } catch (e) {
+        console.error('Failed to clear refreshToken from the DB!');
+      }
+
       router.replace('/');
 
       setShouldIgnoreHeaderChange(true);
@@ -56,6 +76,11 @@ export const Header = observer(
         accessToken: null,
         refreshToken: null,
       });
+    }, [logoutTrigger, router]);
+
+    const handleGoBackClick = useCallback(() => {
+      setLoadingButtonType('go back');
+      router.push('/');
     }, [router]);
 
     const buttons = useMemo(() => {
@@ -64,7 +89,8 @@ export const Header = observer(
           <Button
             variant="darkActionButton"
             className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px] w-[150px]"
-            onClick={router.back}
+            onClick={handleGoBackClick}
+            isLoading={loadingButtonType === 'go back'}
           >
             Go Back
           </Button>
@@ -73,7 +99,11 @@ export const Header = observer(
 
       if (store.isAuthenticated) {
         return (
-          <Button onClick={handleSignOut} variant="lightActionButton">
+          <Button
+            isLoading={loadingButtonType === 'sign out'}
+            onClick={handleSignOut}
+            variant="lightActionButton"
+          >
             Sign out
           </Button>
         );
@@ -81,13 +111,22 @@ export const Header = observer(
 
       return (
         <>
-          <Link href="auth/login">
-            <Button variant="lightActionButton">Login</Button>
+          <Link href="auth/login" onClick={() => setLoadingButtonType('login')}>
+            <Button
+              variant="lightActionButton"
+              isLoading={loadingButtonType === 'login'}
+            >
+              Login
+            </Button>
           </Link>
 
-          <Link href="auth/register">
+          <Link
+            href="auth/register"
+            onClick={() => setLoadingButtonType('sign up')}
+          >
             <Button
               variant="darkActionButton"
+              isLoading={loadingButtonType === 'sign up'}
               className="ml-[30px] mobile:ml-[15px] mini-mobile:ml-[10px]"
             >
               Sign up
@@ -95,7 +134,7 @@ export const Header = observer(
           </Link>
         </>
       );
-    }, [handleSignOut, isAuthHeader, router.back]);
+    }, [handleGoBackClick, handleSignOut, isAuthHeader, loadingButtonType]);
 
     useEffect(() => {
       if (!isSidebarVisible) {

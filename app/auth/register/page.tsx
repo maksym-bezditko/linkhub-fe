@@ -7,6 +7,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@apollo/client';
+import axios from 'axios';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Form,
   FormControl,
@@ -23,6 +31,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { store } from '@/store';
 import { CreateUserResponse } from '@/types';
 import { CREATE_USER_MUTATION } from '@/graphql/mutations/create-user.mutation';
+import { ProfileImageSelector } from '@/components/ProfileImageSelector';
 
 const formSchema = z
   .object({
@@ -40,18 +49,16 @@ const formSchema = z
       .refine(async (e) => {
         return await checkForUsernameExistence(e);
       }, 'This username is already in use, try another one'),
-    fullName: z
-      .string()
-      .max(100, {
-        message: 'Your full name is too long (should be less than 100 symbols)',
-      })
-      .refine((e) => e.split(' ').length > 1, {
-        message:
-          'Please enter your full name (two or more words separated by one space)',
-      }),
+    firstName: z.string().max(50, {
+      message: 'Your first name is too long (should be less than 50 symbols)',
+    }),
+    lastName: z.string().max(50, {
+      message: 'Your last name is too long (should be less than 50 symbols)',
+    }),
     bio: z.string().max(300, {
       message: 'Your bio is too long (should be less than 300 symbols)',
     }),
+    gender: z.enum(['MALE', 'FEMALE', 'TRANS', 'NON-BINARY']),
     password: z.string().min(6, {
       message: 'Password cannot be less than 6 symbols long',
     }),
@@ -63,14 +70,16 @@ const formSchema = z
   });
 
 const RegisterPage = (): JSX.Element => {
-  const [trigger] = useMutation<CreateUserResponse>(CREATE_USER_MUTATION);
+  const [createUserTrigger] =
+    useMutation<CreateUserResponse>(CREATE_USER_MUTATION);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       userName: '',
-      fullName: '',
+      firstName: '',
+      lastName: '',
       bio: '',
       password: '',
     },
@@ -79,6 +88,7 @@ const RegisterPage = (): JSX.Element => {
   const router = useRouter();
 
   const [isAuthLoading, setIsAuthLoading] = useState(false);
+  const [localImageFile, setLocalImageFile] = useState<File>();
 
   const onSubmit = useCallback(
     async (values: z.infer<typeof formSchema>) => {
@@ -87,14 +97,15 @@ const RegisterPage = (): JSX.Element => {
       const mappedValues = {
         bio: values.bio || null,
         email: values.email,
-        fullName: values.fullName,
+        firstName: values.firstName,
+        lastName: values.lastName,
         password: values.password,
-        profileLink: null,
         userName: values.userName,
+        gender: values.gender,
       };
 
       try {
-        const { data, errors } = await trigger({
+        const { data, errors } = await createUserTrigger({
           variables: {
             createUserInput: mappedValues,
           },
@@ -114,13 +125,30 @@ const RegisterPage = (): JSX.Element => {
           refreshToken: data?.createUser.refreshToken,
         });
 
+        if (localImageFile) {
+          const formData = new FormData();
+
+          formData.append('file', localImageFile);
+
+          await axios.post(
+            process.env.API_BASE_URL + '/files/upload-profile-image',
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${data.createUser.accessToken}`,
+              },
+            },
+          );
+        }
+
         router.replace('/feed');
       } catch (e) {
         console.error(e);
         setIsAuthLoading(false);
       }
     },
-    [router, trigger],
+    [createUserTrigger, localImageFile, router],
   );
 
   useEffect(() => {
@@ -140,9 +168,15 @@ const RegisterPage = (): JSX.Element => {
             ease: 'easeIn',
           }}
         >
+          <ProfileImageSelector
+            setLocalImageFile={setLocalImageFile}
+            localImageFile={localImageFile}
+          />
+
           <FormField
             control={form.control}
             name="email"
+            defaultValue=""
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-white">Email</FormLabel>
@@ -158,6 +192,7 @@ const RegisterPage = (): JSX.Element => {
           <FormField
             control={form.control}
             name="userName"
+            defaultValue=""
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-white">Username</FormLabel>
@@ -170,14 +205,29 @@ const RegisterPage = (): JSX.Element => {
             )}
           />
 
-          {/* TODO: Place file input here */}
+          <FormField
+            control={form.control}
+            name="firstName"
+            defaultValue=""
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">First name</FormLabel>
+                <FormControl>
+                  <Input variant="auth" {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
-            name="fullName"
+            name="lastName"
+            defaultValue=""
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">Full name</FormLabel>
+                <FormLabel className="text-white">Last name</FormLabel>
                 <FormControl>
                   <Input variant="auth" {...field} />
                 </FormControl>
@@ -190,6 +240,7 @@ const RegisterPage = (): JSX.Element => {
           <FormField
             control={form.control}
             name="bio"
+            defaultValue=""
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-white">Bio (optional)</FormLabel>
@@ -204,6 +255,36 @@ const RegisterPage = (): JSX.Element => {
 
           <FormField
             control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Gender</FormLabel>
+
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your gender" />
+                    </SelectTrigger>
+                  </FormControl>
+
+                  <SelectContent>
+                    <SelectItem value="MALE">MALE</SelectItem>
+                    <SelectItem value="FEMALE">FEMALE</SelectItem>
+                    <SelectItem value="TRANS">TRANS</SelectItem>
+                    <SelectItem value="NON-BINARY">NON-BINARY</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            defaultValue=""
             name="password"
             render={({ field }) => (
               <FormItem>
@@ -219,6 +300,7 @@ const RegisterPage = (): JSX.Element => {
 
           <FormField
             control={form.control}
+            defaultValue=""
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
