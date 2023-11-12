@@ -26,7 +26,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AuthBackground } from '@/components/AuthBackground';
-import { checkForEmailExistence, checkForUsernameExistence } from '@/lib/utils';
+import { checkForEmailExistence, checkForNicknameExistence } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import { store } from '@/store';
 import { CreateUserResponse } from '@/types';
@@ -47,7 +47,7 @@ const formSchema = z
         message: 'Your username is too long (should be less than 50 symbols)',
       })
       .refine(async (e) => {
-        return await checkForUsernameExistence(e);
+        return await checkForNicknameExistence(e);
       }, 'This username is already in use, try another one'),
     firstName: z.string().max(50, {
       message: 'Your first name is too long (should be less than 50 symbols)',
@@ -58,7 +58,7 @@ const formSchema = z
     bio: z.string().max(300, {
       message: 'Your bio is too long (should be less than 300 symbols)',
     }),
-    gender: z.enum(['MALE', 'FEMALE', 'TRANS', 'NON-BINARY']),
+    gender: z.enum(['MALE', 'FEMALE']),
     password: z.string().min(6, {
       message: 'Password cannot be less than 6 symbols long',
     }),
@@ -273,8 +273,6 @@ const RegisterPage = (): JSX.Element => {
                   <SelectContent>
                     <SelectItem value="MALE">MALE</SelectItem>
                     <SelectItem value="FEMALE">FEMALE</SelectItem>
-                    <SelectItem value="TRANS">TRANS</SelectItem>
-                    <SelectItem value="NON-BINARY">NON-BINARY</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

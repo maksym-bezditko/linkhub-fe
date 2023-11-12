@@ -4,9 +4,9 @@ import { apolloClient } from '@/components/Providers';
 import { CHECK_FOR_EMAIL_EXISTENCE_QUERY } from '@/graphql/queries/check-for-email-existence.query';
 import {
   CheckForEmailExistenceResponse,
-  CheckForUsernameExistenceResponse,
+  CheckForNicknameExistenceResponse,
 } from '@/types';
-import { CHECK_FOR_USERNAME_EXISTENCE_QUERY } from '@/graphql/queries/check-for-username-existence.query';
+import { CHECK_FOR_NICKNAME_EXISTENCE_QUERY } from '@/graphql/queries/check-for-nickname-existence.query';
 
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
@@ -36,21 +36,21 @@ export const checkForEmailExistence = async (
   }
 };
 
-export const checkForUsernameExistence = async (
+export const checkForNicknameExistence = async (
   userName: string,
 ): Promise<boolean> => {
   try {
     const { data, error } =
-      await apolloClient.query<CheckForUsernameExistenceResponse>({
-        query: CHECK_FOR_USERNAME_EXISTENCE_QUERY,
+      await apolloClient.query<CheckForNicknameExistenceResponse>({
+        query: CHECK_FOR_NICKNAME_EXISTENCE_QUERY,
         variables: {
-          checkForUsernameExistenceInput: {
+          checkForNicknameExistenceInput: {
             userName,
           },
         },
       });
 
-    if (error || !data || !data.checkForUsernameExistence.succeeded) {
+    if (error || !data || !data.checkForNicknameExistence.succeeded) {
       throw new Error();
     }
 

@@ -1,18 +1,37 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import Image from 'next/image';
-import { LuEdit, LuX } from 'react-icons/lu';
+import { EditButton } from './EditButton';
+import { XButton } from './XButton';
+import { Loader } from './Loader';
 import defaultProfileImage from '@/public/profile/blank-profile-image.jpg';
+import { Image as ImageType } from '@/types';
 
 type Props = {
   setLocalImageFile: React.Dispatch<React.SetStateAction<File | undefined>>;
   localImageFile?: File;
+  previousImage?: ImageType | null;
+  isLoading?: boolean;
+  setPreviousImage?: React.Dispatch<React.SetStateAction<ImageType | null>>;
 };
 
 export const ProfileImageSelector: React.FC<Props> = ({
-  setLocalImageFile,
+  isLoading,
   localImageFile,
+  previousImage,
+  setLocalImageFile,
+  setPreviousImage,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const imageUrl = useMemo(() => {
+    if (previousImage) {
+      return previousImage.url;
+    }
+
+    return localImageFile
+      ? URL.createObjectURL(localImageFile)
+      : defaultProfileImage;
+  }, [localImageFile, previousImage]);
 
   const handleInputClick = useCallback(() => {
     if (inputRef.current) {
@@ -36,43 +55,41 @@ export const ProfileImageSelector: React.FC<Props> = ({
 
     setLocalImageFile(undefined);
     inputRef.current.value = '';
-  }, [setLocalImageFile]);
+
+    setPreviousImage?.(null);
+  }, [setLocalImageFile, setPreviousImage]);
 
   return (
     <div className="flex items-center justify-center relative h-[200px] w-[200px] mb-[40px]">
-      <Image
-        className="rounded-full w-full h-full object-cover"
-        width={200}
-        height={200}
-        src={
-          localImageFile
-            ? URL.createObjectURL(localImageFile)
-            : defaultProfileImage
-        }
-        alt="default profile image"
-      />
+      {isLoading ? (
+        <Loader color="#fff" size={100} />
+      ) : (
+        <>
+          <Image
+            className="rounded-full w-full h-full object-cover"
+            width={200}
+            height={200}
+            src={imageUrl}
+            alt="default profile image"
+          />
 
-      <div
-        onClick={handleInputClick}
-        className="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white cursor-pointer absolute top-0 right-[-50px]"
-      >
-        <LuEdit />
-      </div>
+          <div className="absolute top-0 right-[-50px]">
+            <EditButton handleClick={handleInputClick} />
+          </div>
 
-      <div
-        onClick={handleReset}
-        className="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-white cursor-pointer absolute bottom-0 right-[-50px]"
-      >
-        <LuX />
-      </div>
+          <div className="absolute bottom-0 right-[-50px]">
+            <XButton handleClick={handleReset} />
+          </div>
 
-      <input
-        type="file"
-        className="hidden"
-        onChange={handleChange}
-        ref={inputRef}
-        accept=".jpg, .jpeg, .png, image/*"
-      />
+          <input
+            type="file"
+            className="hidden"
+            onChange={handleChange}
+            ref={inputRef}
+            accept=".jpg, .jpeg, .png, image/*"
+          />
+        </>
+      )}
     </div>
   );
 };

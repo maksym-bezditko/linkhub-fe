@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Header } from './Header';
-import { Sidebar } from './Sidebar';
+import Sidebar from './Sidebar';
 
 export const HeaderWithSidebar = (): JSX.Element => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);

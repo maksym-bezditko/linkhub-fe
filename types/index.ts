@@ -39,8 +39,23 @@ export type CheckForEmailExistenceResponse = {
   checkForEmailExistence: CommonResponse;
 };
 
-export type CheckForUsernameExistenceResponse = {
-  checkForUsernameExistence: CommonResponse;
+export type CheckForNicknameExistenceResponse = {
+  checkForNicknameExistence: CommonResponse;
+};
+
+export type CreatePostResponse = {
+  createPost: {
+    id: string;
+    caption: string;
+    location: string | null;
+    userId: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
+
+export type UpdateUserResponse = {
+  updateUser: CommonResponse;
 };
 
 export type CreateUserResponse = {
@@ -52,22 +67,20 @@ export type UserIdResponse = {
 };
 
 export type Image = {
-  imageId: string;
   name: string;
   url: string;
 };
 
-export type Gender = 'MALE' | 'FEMALE' | 'TRANS' | 'NON-BINARY';
+export type Sex = 'MALE' | 'FEMALE';
 
-export type ProfileResponse = {
-  getProfile: {
+export type UserResponse = {
+  getUserById: {
     id: string;
-    userId: string;
     bio: string;
     firstName: string;
-    gender: Gender;
+    sex: Sex;
     lastName: string;
-    userName: string;
+    nickname: string;
     createdAt: Date;
     updatedAt: Date;
   };

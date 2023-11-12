@@ -1,15 +1,14 @@
 import { gql } from '@apollo/client';
 
-export const PROFILE_QUERY = gql`
+export const USER_QUERY = gql`
   query {
-    getProfile {
+    getUserById {
       id
-      userId
       bio
       firstName
-      gender
+      sex
       lastName
-      userName
+      nickname
       createdAt
       updatedAt
     }

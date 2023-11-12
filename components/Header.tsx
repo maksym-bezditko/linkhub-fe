@@ -9,12 +9,11 @@ import { useRouter } from 'next/navigation';
 import { observer } from 'mobx-react';
 import { useMutation } from '@apollo/client';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 import logo from '@/public/logo/png/main_bg.png';
 import { cn } from '@/lib/utils';
 import { store } from '@/store';
 import { UserIdResponse } from '@/types';
-import { LOGOUT_MUTATION } from '@/graphql/mutations/user-id.mutation';
+import { LOGOUT_MUTATION } from '@/graphql/mutations/logout.mutation';
 
 const SIDEBAR_WRAPPER_CLASSNAMES =
   'h-[25px] w-[150px] laptop:h-[20px] laptop:w-[130px] mobile:h-[20px] mobile:w-[110px] mini-mobile:h-[15px]';
@@ -143,7 +142,7 @@ export const Header = observer(
     }, [isSidebarVisible]);
 
     return (
-      <header className="absolute top-0 h-[15%] w-full flex flex-row items-center mobile:h-[100px] z-20">
+      <header className="absolute h-[125px] top-0 w-full flex flex-row items-center mobile:h-[100px] z-20">
         <div
           className={cn(
             'absolute z-[-50] w-full h-full',
@@ -151,21 +150,17 @@ export const Header = observer(
           )}
         ></div>
 
-        {isAuthHeader ? (
-          <div className={SIDEBAR_WRAPPER_CLASSNAMES}></div>
-        ) : (
-          <BsLayoutTextSidebar
-            onClick={() => setIsSidebarVisible?.((prev) => !prev)}
-            className={cn(
-              SIDEBAR_WRAPPER_CLASSNAMES,
-              'duration-100 cursor-pointer',
-              isSidebarVisible ? 'text-white' : 'text-primary-grey',
-              isIconHovered ? 'text-white' : '',
-            )}
-            onMouseOver={() => setIsIconHovered(true)}
-            onMouseOut={() => setIsIconHovered(false)}
-          />
-        )}
+        <BsLayoutTextSidebar
+          onClick={() => setIsSidebarVisible?.((prev) => !prev)}
+          className={cn(
+            SIDEBAR_WRAPPER_CLASSNAMES,
+            'duration-100 cursor-pointer',
+            isSidebarVisible ? 'text-white' : 'text-primary-grey',
+            isIconHovered ? 'text-white' : '',
+          )}
+          onMouseOver={() => setIsIconHovered(true)}
+          onMouseOut={() => setIsIconHovered(false)}
+        />
 
         <motion.div
           initial={{ opacity: 0 }}
@@ -187,14 +182,8 @@ export const Header = observer(
         </motion.div>
 
         <div className="h-full flex flex-row justify-end laptop:justify-end pr-[20px] items-center w-full">
-          {(store.isAuthenticated || shouldIgnoreHeaderChange) &&
-          !isAuthHeader ? (
-            <Input
-              className="mx-[30px] laptop:hidden"
-              type="text"
-              placeholder="Search..."
-            />
-          ) : (
+          {((!store.isAuthenticated && !shouldIgnoreHeaderChange) ||
+            isAuthHeader) && (
             <nav className="laptop:hidden">
               <ul className="flex flex-row pr-[20px] text-white cursor-pointer">
                 {ADDITIONAL_INFO_ITEMS.map((item) => {

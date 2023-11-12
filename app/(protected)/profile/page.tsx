@@ -6,40 +6,46 @@ import { observer } from 'mobx-react';
 import { useQuery } from '@apollo/client';
 import axios from 'axios';
 import Image from 'next/image';
-import { PROFILE_QUERY } from '@/graphql/queries/profile.query';
+import { useRouter } from 'next/navigation';
+import { USER_QUERY } from '@/graphql/queries/profile.query';
 import { store } from '@/store';
-import { Image as ImageType, ProfileResponse } from '@/types';
+import { Image as ImageType, UserResponse } from '@/types';
 import defaultProfileImage from '@/public/profile/blank-profile-image.jpg';
 import { PostsFeed } from '@/components/PostsFeed';
 import { Loader } from '@/components/Loader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { EditButton } from '@/components/EditButton';
 
 const ProfileView = () => {
   const [profileImage, setProfileImage] = useState<ImageType | null>(null);
-
   const [isProfileImageLoading, setIsProfileImageLoading] = useState(false);
 
-  const { data, loading: isProfileDataLoading } = useQuery<ProfileResponse>(
-    PROFILE_QUERY,
-    {
-      context: {
-        headers: {
-          Authorization: `Bearer ${store.accessToken}`,
-        },
+  const router = useRouter();
+
+  const {
+    data,
+    loading: isProfileDataLoading,
+    error: isProfileDataError,
+  } = useQuery<UserResponse>(USER_QUERY, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${store.accessToken}`,
       },
     },
-  );
+  });
 
-  const userData = data?.getProfile;
+  const userData = data?.getUserById;
+  const isLoading =
+    isProfileImageLoading || isProfileDataLoading || isProfileDataError;
 
-  const isLoading = isProfileImageLoading || isProfileDataLoading;
+  const goToEditPage = () => router.push('/edit-profile');
 
   useEffect(() => {
     (async () => {
       try {
         setIsProfileImageLoading(true);
 
-        const { data: image } = await axios.get(
+        const { data: image } = await axios.get<ImageType>(
           process.env.API_BASE_URL + '/files/retrieve-profile-image',
           {
             headers: {
@@ -62,7 +68,7 @@ const ProfileView = () => {
   return (
     <div className="flex flex-col w-full h-full justify-start items-center">
       <div className="flex flex-col w-[95%] max-w-[800px] gap-y-[50px]">
-        <div className="px-[20px] flex gap-x-[40px] w-full h-full bg-white py-[20px] rounded-full justify-center items-center">
+        <div className="px-[20px] flex gap-x-[40px] w-full h-full bg-white py-[20px] rounded-full justify-center items-center relative">
           {isLoading ? (
             <Loader />
           ) : (
@@ -76,7 +82,7 @@ const ProfileView = () => {
               />
 
               <div className="grow">
-                <p className="mb-[15px] font-extrabold">{userData?.userName}</p>
+                <p className="mb-[15px] font-extrabold">{userData?.nickname}</p>
                 <div className="flex flex-row gap-x-[40px] mb-[15px]">
                   <p>Publishes: 0</p>
                   <p>Followers: 0</p>
@@ -88,6 +94,12 @@ const ProfileView = () => {
                 <p className="mb-[15px]">{userData?.bio}</p>
               </div>
             </>
+          )}
+
+          {!isLoading && (
+            <div className="absolute right-[-50px] top-[50%] translate-y-[-15px]">
+              <EditButton handleClick={goToEditPage} />
+            </div>
           )}
         </div>
       </div>

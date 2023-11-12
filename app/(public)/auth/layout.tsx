@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header } from '@/components/Header';
+import { HeaderWithSidebar } from '@/components/HeaderWithSidebar';
 
 const AuthLayout = ({
   children,
@@ -8,7 +8,7 @@ const AuthLayout = ({
 }): JSX.Element => {
   return (
     <div className="flex justify-center items-start py-[20vh] px-[20px]">
-      <Header isAuthHeader />
+      <HeaderWithSidebar />
 
       {children}
     </div>
