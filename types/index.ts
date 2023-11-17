@@ -4,7 +4,7 @@ export type Comment = {
   likes: string;
 };
 
-export type Post = {
+export type PostResponsePost = {
   id: string;
   userName: string;
   imageUrl: string;
@@ -73,15 +73,70 @@ export type Image = {
 
 export type Sex = 'MALE' | 'FEMALE';
 
+export type Follow = {
+  followedUserId: string;
+  followingUserId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type PostOwnerResponse = {
+  id: string;
+  nickname: string;
+};
+
+export type PostResponse = {
+  id: string;
+  caption: string;
+  location: string;
+  user: PostOwnerResponse;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type User = {
+  id: string;
+  bio: string;
+  firstName: string;
+  sex: Sex;
+  lastName: string;
+  nickname: string;
+  createdAt: Date;
+  updatedAt: Date;
+  followedBy: Follow[];
+  following: Follow[];
+  posts: PostResponse[];
+};
+
 export type UserResponse = {
-  getUserById: {
-    id: string;
-    bio: string;
-    firstName: string;
-    sex: Sex;
-    lastName: string;
-    nickname: string;
-    createdAt: Date;
-    updatedAt: Date;
-  };
+  getUserById: User;
+};
+
+export type UserRecommendationsResponse = {
+  getRecommendations: User[];
+};
+
+export type PostImageResponse = {
+  url: string;
+};
+
+export type LikeResponse = {
+  userId: string;
+};
+
+export type PostWithImagesAndLikesResponse = PostResponse & {
+  postImages: PostImageResponse[];
+  likes: LikeResponse[];
+};
+
+export type PostsResponse = {
+  getUserPosts: PostResponse[];
+};
+
+export type PostsWithImageAndLikesResponse = {
+  getUserPosts: PostWithImagesAndLikesResponse[];
+};
+
+export type DeletePostResponse = {
+  deletePost: CommonResponse;
 };

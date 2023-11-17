@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import axios from 'axios';
 import {
   Select,
@@ -29,9 +29,10 @@ import { AuthBackground } from '@/components/AuthBackground';
 import { checkForEmailExistence, checkForNicknameExistence } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import { store } from '@/store';
-import { CreateUserResponse } from '@/types';
+import { CreateUserResponse, UserResponse } from '@/types';
 import { CREATE_USER_MUTATION } from '@/graphql/mutations/create-user.mutation';
 import { ProfileImageSelector } from '@/components/ProfileImageSelector';
+import { USER_QUERY } from '@/graphql/queries/profile.query';
 
 const formSchema = z
   .object({
@@ -72,6 +73,8 @@ const formSchema = z
 const RegisterPage = (): JSX.Element => {
   const [createUserTrigger] =
     useMutation<CreateUserResponse>(CREATE_USER_MUTATION);
+
+  const [getUserProfile] = useLazyQuery<UserResponse>(USER_QUERY);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -121,8 +124,8 @@ const RegisterPage = (): JSX.Element => {
         }
 
         store.setTokens({
-          accessToken: data?.createUser.accessToken,
-          refreshToken: data?.createUser.refreshToken,
+          accessToken: data.createUser.accessToken,
+          refreshToken: data.createUser.refreshToken,
         });
 
         if (localImageFile) {
@@ -142,13 +145,23 @@ const RegisterPage = (): JSX.Element => {
           );
         }
 
-        router.replace('/feed');
+        router.replace('/');
+
+        const { data: profile } = await getUserProfile({
+          context: {
+            headers: {
+              Authorization: `Bearer ${data.createUser.accessToken}`,
+            },
+          },
+        });
+
+        store.setProfile(profile ?? null);
       } catch (e) {
         console.error(e);
         setIsAuthLoading(false);
       }
     },
-    [createUserTrigger, localImageFile, router],
+    [createUserTrigger, getUserProfile, localImageFile, router],
   );
 
   useEffect(() => {

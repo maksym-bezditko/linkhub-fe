@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import { EditButton } from './EditButton';
 import { XButton } from './XButton';
@@ -13,6 +13,14 @@ export const PostImageSelector = (props: Props): JSX.Element => {
   const { setLocalImageFile, localImageFile } = props;
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const imageUrl = useMemo(
+    () =>
+      localImageFile
+        ? URL.createObjectURL(localImageFile)
+        : defaultProfileImage,
+    [localImageFile],
+  );
 
   const handleInputClick = useCallback(() => {
     if (inputRef.current) {
@@ -43,11 +51,7 @@ export const PostImageSelector = (props: Props): JSX.Element => {
       <Image
         className="rounded-s w-full h-full object-cover"
         fill
-        src={
-          localImageFile
-            ? URL.createObjectURL(localImageFile)
-            : defaultProfileImage
-        }
+        src={imageUrl}
         alt="default profile image"
       />
 

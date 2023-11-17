@@ -2,11 +2,13 @@
 
 import { makeAutoObservable } from 'mobx';
 import { makePersistable } from 'mobx-persist-store';
-import { Tokens } from '@/types';
+import { Tokens, UserResponse } from '@/types';
 
 class Store {
   accessToken: string | null = null;
   refreshToken: string | null = null;
+
+  profile: UserResponse['getUserById'] | null = null;
 
   isFullscreenLoaderVisible = false;
 
@@ -19,7 +21,12 @@ class Store {
 
     makePersistable(this, {
       name: 'Store',
-      properties: ['accessToken', 'refreshToken', 'isFullscreenLoaderVisible'],
+      properties: [
+        'accessToken',
+        'refreshToken',
+        'isFullscreenLoaderVisible',
+        'profile',
+      ],
       storage: window.localStorage,
     });
   }
@@ -27,6 +34,10 @@ class Store {
   setTokens(tokens: Tokens) {
     this.accessToken = tokens.accessToken;
     this.refreshToken = tokens.refreshToken;
+  }
+
+  setProfile(userResponse: UserResponse | null) {
+    this.profile = userResponse?.getUserById ?? null;
   }
 
   setIsFullscreenLoaderVisible(visible: boolean) {

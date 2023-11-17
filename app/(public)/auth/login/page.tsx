@@ -19,8 +19,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AuthBackground } from '@/components/AuthBackground';
 import { LOGIN_WITH_EMAIL_QUERY } from '@/graphql/queries/login-with-email.query';
-import { LoginWithEmailResponse } from '@/types';
+import { LoginWithEmailResponse, UserResponse } from '@/types';
 import { store } from '@/store';
+import { USER_QUERY } from '@/graphql/queries/profile.query';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -31,6 +32,7 @@ const LoginPage = (): JSX.Element => {
   const [trigger] = useLazyQuery<LoginWithEmailResponse>(
     LOGIN_WITH_EMAIL_QUERY,
   );
+  const [getUserProfile] = useLazyQuery<UserResponse>(USER_QUERY);
 
   const [isAuthLoading, setIsAuthLoading] = useState(false);
 
@@ -69,7 +71,17 @@ const LoginPage = (): JSX.Element => {
           refreshToken: data?.loginWithEmail.refreshToken,
         });
 
-        router.replace('/feed');
+        router.replace('/');
+
+        const { data: profile } = await getUserProfile({
+          context: {
+            headers: {
+              Authorization: `Bearer ${data.loginWithEmail.accessToken}`,
+            },
+          },
+        });
+
+        store.setProfile(profile ?? null);
       } catch (e) {
         console.error(e);
         form.setError('root.signIn', {
@@ -79,7 +91,7 @@ const LoginPage = (): JSX.Element => {
         setIsAuthLoading(false);
       }
     },
-    [form, router, trigger],
+    [form, getUserProfile, router, trigger],
   );
 
   useEffect(() => {

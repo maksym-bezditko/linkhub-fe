@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const USER_QUERY = gql`
+export const GET_USER_RECOMMENDATIONS = gql`
   query {
-    getUserById {
+    getRecommendations {
       id
       bio
       firstName
@@ -25,14 +25,6 @@ export const USER_QUERY = gql`
       }
       posts {
         id
-        caption
-        location
-        user {
-          id
-          nickname
-        }
-        createdAt
-        updatedAt
       }
     }
   }

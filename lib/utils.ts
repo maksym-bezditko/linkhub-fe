@@ -59,3 +59,11 @@ export const checkForNicknameExistence = async (
     return false;
   }
 };
+
+export const findHashtags = (searchText: string): string[] => {
+  const regexp = /\B\#\w\w+\b/g;
+
+  const result = searchText.match(regexp);
+
+  return result ?? [];
+};

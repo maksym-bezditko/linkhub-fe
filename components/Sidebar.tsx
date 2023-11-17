@@ -5,7 +5,6 @@ import {
   LuLayout,
   LuSearch,
   LuCompass,
-  LuMessageCircle,
   LuPlusCircle,
   LuBook,
 } from 'react-icons/lu';
@@ -25,7 +24,7 @@ import {
   DialogTrigger,
 } from './ui/dialog';
 import { PostImageSelector } from './PostImageSelector';
-import { cn } from '@/lib/utils';
+import { cn, findHashtags } from '@/lib/utils';
 import { usePrevious } from '@/hooks/usePrevious';
 import { CreatePostResponse, MenuSection } from '@/types';
 import { store } from '@/store';
@@ -70,6 +69,7 @@ const Sidebar = ({
         createPostInput: {
           caption,
           location: location || null,
+          hashtags: findHashtags(caption),
         },
       },
       context: {
@@ -109,22 +109,20 @@ const Sidebar = ({
       {
         title: 'Main',
         icon: <LuLayout {...COMMON_ICON_PROPS} />,
-        shouldAppear: store.isAuthenticated,
+        shouldAppear: true,
+        href: '/',
       },
       {
         title: 'Search',
         icon: <LuSearch {...COMMON_ICON_PROPS} />,
-        shouldAppear: true,
+        shouldAppear: store.isAuthenticated,
+        href: '/search',
       },
       {
         title: 'Explore',
         icon: <LuCompass {...COMMON_ICON_PROPS} />,
-        shouldAppear: true,
-      },
-      {
-        title: 'Chats',
-        icon: <LuMessageCircle {...COMMON_ICON_PROPS} />,
         shouldAppear: store.isAuthenticated,
+        href: '/explore',
       },
       {
         title: 'New post',
@@ -198,6 +196,7 @@ const Sidebar = ({
                       <p className="text-white relative">{title}</p>
                     </div>
                   </DialogTrigger>
+
                   <DialogContent className="sm:max-w-[425px] bg-slate-500">
                     <DialogHeader>
                       <DialogTitle>Create a post</DialogTitle>

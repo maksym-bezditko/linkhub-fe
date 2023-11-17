@@ -65,16 +65,17 @@ export const Header = observer(
         });
       } catch (e) {
         console.error('Failed to clear refreshToken from the DB!');
+      } finally {
+        router.replace('/');
+
+        setShouldIgnoreHeaderChange(true);
+        store.setTokens({
+          accessToken: null,
+          refreshToken: null,
+        });
+
+        store.setProfile(null);
       }
-
-      router.replace('/');
-
-      setShouldIgnoreHeaderChange(true);
-
-      store.setTokens({
-        accessToken: null,
-        refreshToken: null,
-      });
     }, [logoutTrigger, router]);
 
     const handleGoBackClick = useCallback(() => {

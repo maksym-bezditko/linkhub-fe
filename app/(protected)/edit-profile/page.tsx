@@ -196,12 +196,10 @@ const EditProfilePage = (): JSX.Element => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axios.get<ImageType>(
+        const res = await axios.post<ImageType>(
           process.env.API_BASE_URL + '/files/retrieve-profile-image',
           {
-            headers: {
-              Authorization: `Bearer ${store.accessToken}`,
-            },
+            userId: store.profile?.id ?? '',
           },
         );
 
