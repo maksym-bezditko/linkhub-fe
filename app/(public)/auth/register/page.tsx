@@ -42,7 +42,7 @@ const formSchema = z
       .refine(async (e) => {
         return await checkForEmailExistence(e);
       }, 'This email is already in use, try another one'),
-    userName: z
+    nickname: z
       .string()
       .max(50, {
         message: 'Your username is too long (should be less than 50 symbols)',
@@ -59,7 +59,7 @@ const formSchema = z
     bio: z.string().max(300, {
       message: 'Your bio is too long (should be less than 300 symbols)',
     }),
-    gender: z.enum(['MALE', 'FEMALE']),
+    sex: z.enum(['MALE', 'FEMALE']),
     password: z.string().min(6, {
       message: 'Password cannot be less than 6 symbols long',
     }),
@@ -80,7 +80,7 @@ const RegisterPage = (): JSX.Element => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
-      userName: '',
+      nickname: '',
       firstName: '',
       lastName: '',
       bio: '',
@@ -98,13 +98,13 @@ const RegisterPage = (): JSX.Element => {
       setIsAuthLoading(true);
 
       const mappedValues = {
-        bio: values.bio || null,
+        bio: values.bio,
         email: values.email,
         firstName: values.firstName,
         lastName: values.lastName,
         password: values.password,
-        userName: values.userName,
-        gender: values.gender,
+        nickname: values.nickname,
+        sex: values.sex,
       };
 
       try {
@@ -189,7 +189,6 @@ const RegisterPage = (): JSX.Element => {
           <FormField
             control={form.control}
             name="email"
-            defaultValue=""
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-white">Email</FormLabel>
@@ -204,8 +203,7 @@ const RegisterPage = (): JSX.Element => {
 
           <FormField
             control={form.control}
-            name="userName"
-            defaultValue=""
+            name="nickname"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-white">Username</FormLabel>
@@ -221,7 +219,6 @@ const RegisterPage = (): JSX.Element => {
           <FormField
             control={form.control}
             name="firstName"
-            defaultValue=""
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-white">First name</FormLabel>
@@ -237,7 +234,6 @@ const RegisterPage = (): JSX.Element => {
           <FormField
             control={form.control}
             name="lastName"
-            defaultValue=""
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-white">Last name</FormLabel>
@@ -253,7 +249,6 @@ const RegisterPage = (): JSX.Element => {
           <FormField
             control={form.control}
             name="bio"
-            defaultValue=""
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-white">Bio (optional)</FormLabel>
@@ -268,7 +263,7 @@ const RegisterPage = (): JSX.Element => {
 
           <FormField
             control={form.control}
-            name="gender"
+            name="sex"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-white">Gender</FormLabel>

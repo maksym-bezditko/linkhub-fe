@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
@@ -55,8 +57,6 @@ export const UserProfilePreview = observer((props: Props): JSX.Element => {
   });
 
   const router = useRouter();
-
-  console.log(userData);
 
   const [profileImage, setProfileImage] = useState<ImageType | null>(null);
   const [isProfileImageLoading, setIsProfileImageLoading] = useState(false);

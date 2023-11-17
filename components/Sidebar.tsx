@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   LuLayout,
+  LuNewspaper,
   LuSearch,
   LuCompass,
   LuPlusCircle,
@@ -13,7 +14,6 @@ import Link from 'next/link';
 import { observer } from 'mobx-react';
 import axios from 'axios';
 import { useMutation } from '@apollo/client';
-import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -49,60 +49,67 @@ const Sidebar = ({
 
   const isPreviouslyOpened = usePrevious(isSidebarVisible);
 
-  const router = useRouter();
-
+  const [open, setOpen] = useState(false);
   const [shouldHideModalOverlay, setShouldHideModalOverlay] = useState(true);
   const [localImageFile, setLocalImageFile] = useState<File>();
 
   const [caption, setCaption] = useState('');
   const [location, setLocation] = useState('');
 
-  const closeSidebar = () => setIsSidebarVisible(false);
+  const closeSidebar = useCallback(
+    () => setIsSidebarVisible(false),
+    [setIsSidebarVisible],
+  );
 
   const handleSubmit = useCallback(async () => {
     if (!localImageFile) {
       return;
     }
 
-    const { data, errors } = await createPost({
-      variables: {
-        createPostInput: {
-          caption,
-          location: location || null,
-          hashtags: findHashtags(caption),
+    try {
+      const { data, errors } = await createPost({
+        variables: {
+          createPostInput: {
+            caption,
+            location: location || null,
+            hashtags: findHashtags(caption),
+          },
         },
-      },
-      context: {
-        headers: {
-          Authorization: `Bearer ${store.accessToken}`,
+        context: {
+          headers: {
+            Authorization: `Bearer ${store.accessToken}`,
+          },
         },
-      },
-    });
+      });
 
-    if (errors || !data || !data.createPost) {
-      console.error(errors);
+      if (errors || !data || !data.createPost) {
+        console.error(errors);
+      }
+
+      const postId = data?.createPost.id || '';
+
+      const formData = new FormData();
+
+      formData.append('files', localImageFile);
+      formData.append('postId', postId);
+
+      await axios.post(
+        process.env.API_BASE_URL + '/files/upload-post-image',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${store.accessToken}`,
+          },
+        },
+      );
+
+      setOpen(false);
+      closeSidebar();
+    } catch (e) {
+      console.error(e);
     }
-
-    const postId = data?.createPost.id || '';
-
-    const formData = new FormData();
-
-    formData.append('files', localImageFile);
-    formData.append('postId', postId);
-
-    await axios.post(
-      process.env.API_BASE_URL + '/files/upload-post-image',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${store.accessToken}`,
-        },
-      },
-    );
-
-    router.push('/profile');
-  }, [caption, createPost, localImageFile, location, router]);
+  }, [caption, closeSidebar, createPost, localImageFile, location]);
 
   const menuSections: MenuSection[] = useMemo(
     () => [
@@ -111,6 +118,12 @@ const Sidebar = ({
         icon: <LuLayout {...COMMON_ICON_PROPS} />,
         shouldAppear: true,
         href: '/',
+      },
+      {
+        title: 'Feed',
+        icon: <LuNewspaper {...COMMON_ICON_PROPS} />,
+        shouldAppear: store.isAuthenticated,
+        href: '/feed',
       },
       {
         title: 'Search',
@@ -185,10 +198,10 @@ const Sidebar = ({
 
             if (title === 'New post') {
               return (
-                <Dialog key={title}>
+                <Dialog key={title} open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild key={title}>
                     <div
-                      className="text-white text-[15px] my-[20px] h-fit flex flex-row items-center"
+                      className="text-white text-[15px] my-[20px] h-fit flex flex-row items-center cursor-pointer"
                       key={title}
                       onClick={closeSidebar}
                     >

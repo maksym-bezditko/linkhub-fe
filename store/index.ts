@@ -27,7 +27,7 @@ class Store {
         'isFullscreenLoaderVisible',
         'profile',
       ],
-      storage: window.localStorage,
+      storage: typeof window !== 'undefined' ? window.localStorage : undefined,
     });
   }
 

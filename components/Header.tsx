@@ -111,7 +111,10 @@ export const Header = observer(
 
       return (
         <>
-          <Link href="auth/login" onClick={() => setLoadingButtonType('login')}>
+          <Link
+            href="/auth/login"
+            onClick={() => setLoadingButtonType('login')}
+          >
             <Button
               variant="lightActionButton"
               isLoading={loadingButtonType === 'login'}
@@ -121,7 +124,7 @@ export const Header = observer(
           </Link>
 
           <Link
-            href="auth/register"
+            href="/auth/register"
             onClick={() => setLoadingButtonType('sign up')}
           >
             <Button

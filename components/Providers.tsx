@@ -10,11 +10,17 @@ import {
 
 import { observer } from 'mobx-react';
 
+const OverrideCache = new Proxy(new InMemoryCache(), {
+  get(target, name, receiver) {
+    return Reflect.get(target, name, receiver);
+  },
+});
+
 export const apolloClient = new ApolloClient({
   link: createHttpLink({
     uri: process.env.GRAPHQL_API_URL,
   }),
-  cache: new InMemoryCache(),
+  cache: OverrideCache,
   ssrMode: true,
   defaultOptions: {
     watchQuery: {
@@ -23,7 +29,7 @@ export const apolloClient = new ApolloClient({
     },
     query: {
       fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
+      errorPolicy: 'ignore',
     },
   },
 });

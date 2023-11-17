@@ -45,12 +45,11 @@ export type CheckForNicknameExistenceResponse = {
 
 export type CreatePostResponse = {
   createPost: {
-    id: string;
     caption: string;
-    location: string | null;
-    userId: string;
-    createdAt: string;
-    updatedAt: string;
+    id: string;
+    likes: LikeResponse[];
+    location: string;
+    postImages: PostImageResponse[];
   };
 };
 
@@ -116,6 +115,14 @@ export type UserRecommendationsResponse = {
   getRecommendations: User[];
 };
 
+export type FriendsPostsResponse = {
+  getFriendsPosts: PostWithImagesAndLikesResponse[];
+};
+
+export type PostsRecommendationsResponse = {
+  getPostsRecommendations: PostWithImagesAndLikesResponse[];
+};
+
 export type PostImageResponse = {
   url: string;
 };
@@ -137,6 +144,34 @@ export type PostsWithImageAndLikesResponse = {
   getUserPosts: PostWithImagesAndLikesResponse[];
 };
 
+export type SearchUsersResponse = {
+  searchUsers: User[];
+};
+
 export type DeletePostResponse = {
   deletePost: CommonResponse;
+};
+
+export enum SearchBy {
+  NICKNAME = 'nickname',
+  FULLNAME = 'fullname',
+}
+
+export enum SortBy {
+  FULLNAME = 'fullname',
+  DATE_OF_ACCOUNT_CREATION = 'dateOfAccountCreation',
+}
+
+export enum SexFilter {
+  ALL = 'all',
+  MALES = 'males',
+  FEMALES = 'females',
+}
+
+export type UserFilters = {
+  searchBy: SearchBy;
+  sortBy: SortBy;
+  searchText: string;
+  sex: SexFilter;
+  withPostsOnly: boolean;
 };

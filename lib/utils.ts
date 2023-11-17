@@ -37,7 +37,7 @@ export const checkForEmailExistence = async (
 };
 
 export const checkForNicknameExistence = async (
-  userName: string,
+  nickname: string,
 ): Promise<boolean> => {
   try {
     const { data, error } =
@@ -45,7 +45,7 @@ export const checkForNicknameExistence = async (
         query: CHECK_FOR_NICKNAME_EXISTENCE_QUERY,
         variables: {
           checkForNicknameExistenceInput: {
-            userName,
+            nickname,
           },
         },
       });
@@ -61,6 +61,7 @@ export const checkForNicknameExistence = async (
 };
 
 export const findHashtags = (searchText: string): string[] => {
+  // eslint-disable-next-line no-useless-escape
   const regexp = /\B\#\w\w+\b/g;
 
   const result = searchText.match(regexp);
